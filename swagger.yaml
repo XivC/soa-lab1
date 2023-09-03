@@ -1,0 +1,128 @@
+openapi: 3.0.3
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  description: '123'
+
+
+tags:
+  - name: CRUD
+    description: Dragons and Persons CRUD operations
+  - name: Killer
+    description: Dragon kill operations
+    externalDocs:
+      description: Find out more about our store
+      url: http://swagger.io
+  - name: user
+    description: Operations about user
+    
+    
+paths:
+  /dragon:
+    post:
+      tags:
+        - CRUD
+      summary: Create new dragon
+      description: Create a new dragon
+      requestBody:
+        description: Create a new pet in the store
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Dragon'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Dragon'
+
+components:
+  schemas:
+    Dragon:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 12
+          readOnly: true
+        name:
+          type: string
+          example: Argoz
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        creationDate:
+          type: string
+          format: date
+          example: 2023-09-03
+        age:
+          type: integer
+          format: int32
+          example: 120
+        color:
+          type: string
+          enum:
+            - RED
+            - YELLOW
+            - ORANGE
+            - BROWN
+        dragonType:
+          type: string
+          enum:
+            - WATER
+            - UNDERGROUND
+            - AIR
+            - FIRE
+        dragonCharacter:
+          type: string
+          enum:
+             - CUNNING
+             - WISE
+             - EVIL
+             - CHAOTIC
+             - CHAOTIC_EVIL
+        killer:
+          $ref: '#/components/schemas/Person'
+      xml:
+        name: dragon
+        
+    Coordinates:
+      type: object
+      properties:
+        x:
+          type: integer
+          format: int32
+          example: 1234
+        y:
+          type: integer
+          format: int64
+          example: 443
+    
+    Person:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Adam Smith
+        height:
+          type: integer
+          format: int64
+          example: 230
+        weight:
+          type: number
+          format: double
+          example: 150.4
+        passportID:
+          type: string
+        nationality:
+          type: string
+          enum:
+            - FRANCE
+            - SPAIN
+            - CHINA
+          
+  
+  
+ 
