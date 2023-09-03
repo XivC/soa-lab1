@@ -4,36 +4,45 @@ info:
   description: Some dragons service
   version: 1.0.0
 
+
+tags:
+  - name: CRUD
+    description: Dragons and Persons CRUD operations
+  - name: Killer
+    description: Dragon kill operations
+
+
+
 paths:
   /dragons:
     get:
       summary: Get a list of dragons
       parameters:
-        - $ref: '#/components/parameters/filterParam'
-        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/FilterParam'
+        - $ref: '#/components/parameters/SortParam'
       responses:
         '200':
-          description: A list of dragons
-          content:
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Dragon'
+          $ref: '#/components/responses/ListOfDragonsResponse'
         '400':
           description: Invalid request parameters
           
     post:
       summary: Create a new dragon
-      requestBody:
-        required: true
-        content:
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Dragon'
+      parameters:
+        - name: dragon
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dragon'
+          
       responses:
         '201':
           description: Dragon created successfully
+          content:
+            application/xml:
+                schema:
+                  $ref: '#/components/schemas/Dragon'
+            
         '400':
           description: Invalid dragon data
 
@@ -41,12 +50,7 @@ paths:
     get:
       summary: Get a dragon by ID
       parameters:
-        - name: dragonId
-          in: path
-          required: true
-          schema:
-            type: integer
-            minimum: 1
+        - $ref: '#/components/parameters/DragonIdParam'
       responses:
         '200':
           description: A dragon
@@ -60,12 +64,7 @@ paths:
     put:
       summary: Update a dragon by ID
       parameters:
-        - name: dragonId
-          in: path
-          required: true
-          schema:
-            type: integer
-            minimum: 1
+        - $ref: '#/components/parameters/DragonIdParam'
       requestBody:
         required: true
         content:
@@ -83,12 +82,7 @@ paths:
     delete:
       summary: Delete a dragon by ID
       parameters:
-        - name: dragonId
-          in: path
-          required: true
-          schema:
-            type: integer
-            minimum: 1
+        - $ref: '#/components/parameters/DragonIdParam'
       responses:
         '204':
           description: Dragon deleted successfully
@@ -101,9 +95,16 @@ paths:
       responses:
         '200':
           description: The sum of age for all dragons
-        '404':
-          description: No dragons found
-
+          content:
+            application/xml:
+              schema:
+                type: integer
+                format: int32
+                example: 12222
+                xml:
+                  name: Sum
+            
+          
   /dragons/count-by-type:
     get:
       summary: Count dragons by type
@@ -112,14 +113,21 @@ paths:
           in: query
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/DragonType'
       responses:
         '200':
           description: The count of dragons with the specified type
+          content:
+            application/xml:
+              schema:
+                type: integer
+                format: int32
+                example: 12222
+                xml:
+                  name: Sum
+                  
         '400':
           description: Invalid request parameters
-        '404':
-          description: No dragons found with the specified type
 
   /dragons/filter-by-color:
     get:
@@ -129,25 +137,30 @@ paths:
           in: query
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/Color'
       responses:
         '200':
-          description: A list of dragons with the specified color
-          content:
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Dragon'
+          $ref: '#/components/responses/ListOfDragonsResponse'
         '400':
           description: Invalid request parameters
-        '404':
-          description: No dragons found with the specified color
 
 components:
+
+  responses:
+    ListOfDragonsResponse:
+      description: A list of dragons
+      content:
+        application/xml:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Dragon'
+            xml:
+              name: Results
+  
   
   parameters:
-    filterParam:
+    FilterParam:
       name: filter
       in: query
       schema:
@@ -165,7 +178,7 @@ components:
               type: string
               example: andrey
       
-    sortParam:
+    SortParam:
       name: sort
       in: query
       schema:
@@ -185,7 +198,15 @@ components:
                 - asc
                 - desc
     
-  
+    DragonIdParam:
+      name: dragonId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        
+      
   schemas:
         
     Dragon:
@@ -194,6 +215,7 @@ components:
         id:
           type: integer
           minimum: 1
+          readOnly: true
         name:
           type: string
           minLength: 1
@@ -206,16 +228,15 @@ components:
           type: integer
           minimum: 1
         color:
-          type: string
-          enum: [RED, YELLOW, ORANGE, BROWN]
-        type:
-          type: string
-          enum: [WATER, UNDERGROUND, AIR, FIRE]
+          $ref: '#/components/schemas/Color'
         character:
-          type: string
-          enum: [CUNNING, WISE, EVIL, CHAOTIC, CHAOTIC_EVIL]
+          $ref: '#/components/schemas/DragonCharacter'
+        type:
+          $ref: '#/components/schemas/DragonType'
         killer:
-          $ref: '#/components/schemas/Person'
+          readOnly: true
+          allOf:
+            - $ref: '#/components/schemas/Person'
 
     Coordinates:
       type: object
@@ -225,6 +246,39 @@ components:
         y:
           type: integer
           minimum: -740
+    
+    Color:
+      type: string
+      enum: 
+        - RED
+        - YELLOW 
+        - ORANGE
+        - BROWN
+    
+    DragonCharacter:
+      type: string
+      enum:
+        - CUNNING
+        - WISE
+        - EVIL
+        - CHAOTIC,
+        - CHAOTIC_EVIL
+    
+    DragonType:
+      type: string
+      enum:
+        - WATER
+        - UNDERGROUND
+        - AIR
+        - FIRE
+    
+    Country:
+      type: string
+      enum:
+        - FRANCE
+        - SPAIN
+        - CHINA
+        
 
     Person:
       type: object
@@ -242,5 +296,4 @@ components:
           type: string
           maxLength: 47
         nationality:
-          type: string
-          enum: [FRANCE, SPAIN, CHINA]
+          $ref: '#/components/schemas/Country'
