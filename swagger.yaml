@@ -1,128 +1,225 @@
 openapi: 3.0.3
 info:
-  title: Swagger Petstore - OpenAPI 3.0
-  description: '123'
+  title: Dybov's and Lavrov's SoA lab-1
+  description: Some dragons service
+  version: 1.0.0
 
-
-tags:
-  - name: CRUD
-    description: Dragons and Persons CRUD operations
-  - name: Killer
-    description: Dragon kill operations
-    externalDocs:
-      description: Find out more about our store
-      url: http://swagger.io
-  - name: user
-    description: Operations about user
-    
-    
 paths:
-  /dragon:
+  /dragons:
+    get:
+      summary: Get a list of dragons
+      parameters:
+        - $ref: '#/components/parameters/filterParam'
+      responses:
+        '200':
+          description: A list of dragons
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dragon'
+        '400':
+          description: Invalid request parameters
+          
     post:
-      tags:
-        - CRUD
-      summary: Create new dragon
-      description: Create a new dragon
+      summary: Create a new dragon
       requestBody:
-        description: Create a new pet in the store
+        required: true
         content:
           application/xml:
             schema:
               $ref: '#/components/schemas/Dragon'
-        required: true
       responses:
         '201':
-          description: Created
+          description: Dragon created successfully
+        '400':
+          description: Invalid dragon data
+
+  /dragons/{dragonId}:
+    get:
+      summary: Get a dragon by ID
+      parameters:
+        - name: dragonId
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: A dragon
           content:
             application/xml:
               schema:
                 $ref: '#/components/schemas/Dragon'
+        '404':
+          description: Dragon not found
+
+    put:
+      summary: Update a dragon by ID
+      parameters:
+        - name: dragonId
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Dragon'
+      responses:
+        '200':
+          description: Dragon updated successfully
+        '400':
+          description: Invalid dragon data
+        '404':
+          description: Dragon not found
+
+    delete:
+      summary: Delete a dragon by ID
+      parameters:
+        - name: dragonId
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '204':
+          description: Dragon deleted successfully
+        '404':
+          description: Dragon not found
+
+  /dragons/sum-age:
+    get:
+      summary: Calculate the sum of age for all dragons
+      responses:
+        '200':
+          description: The sum of age for all dragons
+        '404':
+          description: No dragons found
+
+  /dragons/count-by-type:
+    get:
+      summary: Count dragons by type
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The count of dragons with the specified type
+        '400':
+          description: Invalid request parameters
+        '404':
+          description: No dragons found with the specified type
+
+  /dragons/filter-by-color:
+    get:
+      summary: Filter dragons by color
+      parameters:
+        - name: color
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of dragons with the specified color
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dragon'
+        '400':
+          description: Invalid request parameters
+        '404':
+          description: No dragons found with the specified color
 
 components:
+  
+  parameters:
+    filterParam:
+      name: filter
+      in: query
+      schema:
+        type: array
+        items:
+          type: object
+          required:
+            - field
+            - value
+          properties:
+            field:
+              type: string
+              example: name
+            value:
+              type: string
+              example: andrey
+    
+  
   schemas:
+        
     Dragon:
       type: object
       properties:
         id:
           type: integer
-          format: int64
-          example: 12
-          readOnly: true
+          minimum: 1
         name:
           type: string
-          example: Argoz
+          minLength: 1
         coordinates:
           $ref: '#/components/schemas/Coordinates'
         creationDate:
           type: string
           format: date
-          example: 2023-09-03
         age:
           type: integer
-          format: int32
-          example: 120
+          minimum: 1
         color:
           type: string
-          enum:
-            - RED
-            - YELLOW
-            - ORANGE
-            - BROWN
-        dragonType:
+          enum: [RED, YELLOW, ORANGE, BROWN]
+        type:
           type: string
-          enum:
-            - WATER
-            - UNDERGROUND
-            - AIR
-            - FIRE
-        dragonCharacter:
+          enum: [WATER, UNDERGROUND, AIR, FIRE]
+        character:
           type: string
-          enum:
-             - CUNNING
-             - WISE
-             - EVIL
-             - CHAOTIC
-             - CHAOTIC_EVIL
+          enum: [CUNNING, WISE, EVIL, CHAOTIC, CHAOTIC_EVIL]
         killer:
           $ref: '#/components/schemas/Person'
-      xml:
-        name: dragon
-        
+
     Coordinates:
       type: object
       properties:
         x:
           type: integer
-          format: int32
-          example: 1234
         y:
           type: integer
-          format: int64
-          example: 443
-    
+          minimum: -740
+
     Person:
       type: object
       properties:
         name:
           type: string
-          example: Adam Smith
+          minLength: 1
         height:
           type: integer
-          format: int64
-          example: 230
+          minimum: 1
         weight:
           type: number
-          format: double
-          example: 150.4
+          minimum: 1
         passportID:
           type: string
+          maxLength: 47
         nationality:
           type: string
-          enum:
-            - FRANCE
-            - SPAIN
-            - CHINA
-          
-  
-  
- 
+          enum: [FRANCE, SPAIN, CHINA]
