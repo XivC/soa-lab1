@@ -10,6 +10,7 @@ paths:
       summary: Get a list of dragons
       parameters:
         - $ref: '#/components/parameters/filterParam'
+        - $ref: '#/components/parameters/sortParam'
       responses:
         '200':
           description: A list of dragons
@@ -163,6 +164,26 @@ components:
             value:
               type: string
               example: andrey
+      
+    sortParam:
+      name: sort
+      in: query
+      schema:
+        type: array
+        items:
+          type: object
+          required:
+            - field
+            - order
+          properties:
+            field:
+              type: string
+              example: name
+            order:
+              type: string
+              enum:
+                - asc
+                - desc
     
   
   schemas:
