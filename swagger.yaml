@@ -179,6 +179,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
 
 
+  /persons:
+    post:
+      summary: Create a new person
+      tags:
+        - CRUD
+      parameters:
+        - name: person
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Person'
+            
   /persons/{personId}:
     get:
       summary: Get person by ID
@@ -229,7 +241,7 @@ paths:
         '404':
           description: Person not found
 
-  /dragon/{dragonId}/kill:
+  /dragons/{dragonId}/kill:
     post:
       parameters:
         - in: path
