@@ -190,6 +190,15 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/Person'
+      responses:
+        '201':
+          description: A person created
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Person'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
             
   /persons/{personId}:
     get:
