@@ -22,6 +22,15 @@ paths:
       parameters:
         - $ref: '#/components/parameters/FilterParam'
         - $ref: '#/components/parameters/SortParam'
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          required: False
       responses:
         '200':
           $ref: '#/components/responses/ListOfDragonsResponse'
@@ -155,6 +164,14 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/Color'
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
       responses:
         '200':
           $ref: '#/components/responses/ListOfDragonsResponse'
