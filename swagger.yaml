@@ -17,6 +17,8 @@ paths:
   /dragons:
     get:
       summary: Get a list of dragons
+      tags:
+        - CRUD
       parameters:
         - $ref: '#/components/parameters/FilterParam'
         - $ref: '#/components/parameters/SortParam'
@@ -28,6 +30,8 @@ paths:
           
     post:
       summary: Create a new dragon
+      tags:
+        - CRUD
       parameters:
         - name: dragon
           in: query
@@ -49,6 +53,8 @@ paths:
   /dragons/{dragonId}:
     get:
       summary: Get a dragon by ID
+      tags:
+        - CRUD
       parameters:
         - $ref: '#/components/parameters/DragonIdParam'
       responses:
@@ -63,6 +69,8 @@ paths:
 
     put:
       summary: Update a dragon by ID
+      tags:
+        - CRUD
       parameters:
         - $ref: '#/components/parameters/DragonIdParam'
       requestBody:
@@ -81,6 +89,8 @@ paths:
 
     delete:
       summary: Delete a dragon by ID
+      tags:
+        - CRUD
       parameters:
         - $ref: '#/components/parameters/DragonIdParam'
       responses:
@@ -92,6 +102,8 @@ paths:
   /dragons/sum-age:
     get:
       summary: Calculate the sum of age for all dragons
+      tags:
+        - CRUD
       responses:
         '200':
           description: The sum of age for all dragons
@@ -108,6 +120,8 @@ paths:
   /dragons/count-by-type:
     get:
       summary: Count dragons by type
+      tags:
+        - CRUD
       parameters:
         - name: type
           in: query
@@ -132,6 +146,8 @@ paths:
   /dragons/filter-by-color:
     get:
       summary: Filter dragons by color
+      tags:
+        - CRUD
       parameters:
         - name: color
           in: query
@@ -144,6 +160,62 @@ paths:
         '400':
           description: Invalid request parameters
 
+  /dragon/{dragonId}/kill:
+    post:
+      parameters:
+        - in: path
+          name: dragonId
+          schema:
+            type: integer
+          required: true
+          description: Dragon ID to kill.
+      tags:
+        - Killer
+      summary: Kill a dragon
+      description: Kill dragon
+      responses:
+        '204':
+          description: Killed.
+        '404':
+          description: Dragon with this ID does not exist.
+          
+  /teams/create/{teamId}/{teamName}/{teamSize}/{startCaveId}:
+    post:
+      parameters:
+        - in: path
+          name: teamId
+          schema:
+            type: integer
+          required: true
+          description: Team ID to create.
+        - in: path
+          name: teamName
+          schema:
+            type: string
+          required: true
+          description: Team name.
+        - in: path
+          name: teamSize
+          schema:
+            type: integer
+          required: true
+          description: Team size.
+        - in: path
+          name: startCaveId
+          schema:
+            type: integer
+          required: true
+          description: Cave ID, where team will be created.
+      tags:
+        - Killer
+      summary: Create a team
+      description: Create a team
+      responses:
+        '204':
+          description: Killed.
+        '400':
+          description: Cannot create team with requested parameters.'
+          
 components:
 
   responses:
@@ -157,7 +229,6 @@ components:
               $ref: '#/components/schemas/Dragon'
             xml:
               name: Results
-  
   
   parameters:
     FilterParam:
