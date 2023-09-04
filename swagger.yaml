@@ -26,7 +26,7 @@ paths:
         '200':
           $ref: '#/components/responses/ListOfDragonsResponse'
         '400':
-          description: Invalid request parameters
+          $ref: '#/components/responses/ErrorResponse'
           
     post:
       summary: Create a new dragon
@@ -48,15 +48,16 @@ paths:
                   $ref: '#/components/schemas/Dragon'
             
         '400':
-          description: Invalid dragon data
+          $ref: '#/components/responses/ErrorResponse'
 
   /dragons/{dragonId}:
     get:
-      summary: Get a dragon by ID
+      summary: Get dragon by ID
       tags:
         - CRUD
       parameters:
         - $ref: '#/components/parameters/DragonIdParam'
+        
       responses:
         '200':
           description: A dragon
@@ -73,17 +74,17 @@ paths:
         - CRUD
       parameters:
         - $ref: '#/components/parameters/DragonIdParam'
-      requestBody:
-        required: true
-        content:
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Dragon'
+        - name: dragon
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Dragon'
+
       responses:
         '200':
           description: Dragon updated successfully
         '400':
-          description: Invalid dragon data
+          $ref: '#/components/responses/ErrorResponse'
         '404':
           description: Dragon not found
 
@@ -141,7 +142,7 @@ paths:
                   name: Sum
                   
         '400':
-          description: Invalid request parameters
+          $ref: '#/components/responses/ErrorResponse'
 
   /dragons/filter-by-color:
     get:
@@ -158,7 +159,58 @@ paths:
         '200':
           $ref: '#/components/responses/ListOfDragonsResponse'
         '400':
-          description: Invalid request parameters
+          $ref: '#/components/responses/ErrorResponse'
+
+
+  /persons/{personId}:
+    get:
+      summary: Get person by ID
+      tags:
+        - CRUD
+      parameters:
+        - $ref: '#/components/parameters/PersonIdParam'
+
+      responses:
+        '200':
+          description: A person
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Person'
+        '404':
+          description: Person not found
+
+    put:
+      summary: Update person by ID
+      tags:
+        - CRUD
+      parameters:
+        - $ref: '#/components/parameters/PersonIdParam'
+        - name: person
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Person'
+
+      responses:
+        '200':
+          description: Person updated successfully
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          description: Person not found
+
+    delete:
+      summary: Delete person by ID
+      tags:
+        - CRUD
+      parameters:
+        - $ref: '#/components/parameters/PersonIdParam'
+      responses:
+        '204':
+          description: Person deleted successfully
+        '404':
+          description: Person not found
 
   /dragon/{dragonId}/kill:
     post:
@@ -214,7 +266,7 @@ paths:
         '204':
           description: Killed.
         '400':
-          description: Cannot create team with requested parameters.'
+         $ref: '#/components/responses/ErrorResponse'
           
 components:
 
@@ -229,6 +281,20 @@ components:
               $ref: '#/components/schemas/Dragon'
             xml:
               name: Results
+              
+    ErrorResponse:
+      description: An error
+      content:
+        application/xml:
+          schema:
+            type: array
+            items:
+              type: string
+              xml:
+                name: Error
+            xml:
+              name: Results
+  
   
   parameters:
     FilterParam:
@@ -277,11 +343,22 @@ components:
         type: integer
         minimum: 1
         
-      
+    PersonIdParam:
+      name: personId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        
   schemas:
         
     Dragon:
       type: object
+      required:
+        - name
+        - coordinates
+        - type
       properties:
         id:
           type: integer
@@ -295,6 +372,7 @@ components:
         creationDate:
           type: string
           format: date
+          readOnly: true
         age:
           type: integer
           minimum: 1
